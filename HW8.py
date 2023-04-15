@@ -35,7 +35,18 @@ def plot_rest_categories(db):
     con = sqlite3.connect(db)
     cur = con.cursor()
     return_dict = {}
-    
+    cur2 = con.execute("SELECT c.category, COUNT(r.id) FROM restaurants r, categories c WHERE r.category_id=c.id GROUP BY c.category ORDER BY COUNT(r.id) ASC")
+    places = cur2.fetchall()
+    for place in places:
+        return_dict[place[0]] = place[1]
+    plt.barh(list(return_dict.keys()), list(return_dict.values()))
+    plt.title('Types of Restaurant on South Univeristy Ave')
+    plt.ylabel('Restaurant Categories')
+    plt.xlabel('Number of Restaurants')
+    plt.xticks([0, 1, 2, 3, 4])
+    plt.show()
+    return return_dict
+
     pass
 
 def find_rest_in_building(building_num, db):
