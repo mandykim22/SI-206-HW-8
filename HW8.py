@@ -1,7 +1,7 @@
-# Your name: 
-# Your student id:
-# Your email:
-# List who you have worked with on this homework:
+# Your name: Amanda KIm
+# Your student id: 419200321
+# Your email: mandykim@umich.edu
+# List who you have worked with on this homework: n/a
 
 import matplotlib.pyplot as plt
 import os
@@ -15,6 +15,15 @@ def load_rest_data(db):
     and each inner key is a dictionary, where the key:value pairs should be the category, 
     building, and rating for the restaurant.
     """
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    return_dict = {}
+    cur2 = con.execute("SELECT r.name, r.rating, c.category, b.building FROM restaurants r, categories c, buildings b WHERE r.category_id=c.id AND r.building_id=b.id")
+    places = cur2.fetchall()
+    for place in places:
+        mini_dict = {"category": place[2], "building": place[3], "rating": place[1]}
+        return_dict[place[0]] = mini_dict
+    return return_dict
     pass
 
 def plot_rest_categories(db):
@@ -23,6 +32,10 @@ def plot_rest_categories(db):
     restaurant categories and the values should be the number of restaurants in each category. The function should
     also create a bar chart with restaurant categories and the count of number of restaurants in each category.
     """
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    return_dict = {}
+    
     pass
 
 def find_rest_in_building(building_num, db):
