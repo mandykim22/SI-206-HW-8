@@ -55,6 +55,16 @@ def find_rest_in_building(building_num, db):
     restaurant names. You need to find all the restaurant names which are in the specific building. The restaurants 
     should be sorted by their rating from highest to lowest.
     '''
+
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    return_dict = {}
+    cur2 = con.execute("SELECT r.name FROM restaurants r, buildings b WHERE r.building_id=b.id AND b.building=? ORDER BY rating DESC", (building_num,))
+    places = cur2.fetchall()
+    return_list = []
+    for place in places:
+        return_list.append(place[0])
+    return return_list
     pass
 
 #EXTRA CREDIT
@@ -69,6 +79,43 @@ def get_highest_rating(db): #Do this through DB as well
     The second bar chart displays the buildings along the y-axis and their ratings along the x-axis 
     in descending order (by rating).
     """
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    return_dict = {}
+    return_dict2 = {}
+    return_list = []
+    cur2 = con.execute("select c.category, AVG(r.rating) FROM restaurants r, buildings b, categories c WHERE r.building_id=b.id AND r.category_id=c.id GROUP BY c.category ORDER BY AVG(r.rating) ASC")
+    places = cur2.fetchall()
+    i = 0
+    for place in places:
+        if(i == len(places) - 1):
+            return_list.append((place[0], place[1]))
+        return_dict[place[0]] = place[1]
+        i += 1
+    cur2 = con.execute("SELECT b.building, AVG(r.rating) FROM restaurants r, buildings b, categories c WHERE r.building_id=b.id AND r.category_id=c.id GROUP BY b.building ORDER BY AVG(r.rating) ASC")
+    places = cur2.fetchall()
+    i = 0
+    for place in places:
+        if(i == len(places) - 1):
+            return_list.append((place[0], place[1]))
+        return_dict2[str(place[0])] = place[1]
+        i += 1
+
+    plt.barh(list(return_dict.keys()), list(return_dict.values()))
+    plt.title('Average Restaurant Ratings by Category')
+    plt.ylabel('Categories')
+    plt.xlabel('Ratings')
+    plt.xticks([0, 1, 2, 3, 4, 5])
+    plt.show()
+    plt.barh(list(return_dict2.keys()), list(return_dict2.values()))
+    plt.title('Average Restaurant Ratings by Building')
+    plt.ylabel('Buildings')
+    plt.xlabel('Ratings')
+    plt.xticks([0, 1, 2, 3, 4, 5])
+    plt.show()
+
+    return return_list
+
     pass
 
 #Try calling your functions here
